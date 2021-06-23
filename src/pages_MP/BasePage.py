@@ -15,8 +15,14 @@ class BasePage(WebDriverWait_Util):
     wb_hdr_AISmartPlatform_xpath = (By.XPATH, "//span[contains(text(),'IA Smart Platform')]")
     wb_txt_errorMsg_xpath = (By.XPATH,
                              "//div[contains(@class, 'Toastify__toast Toastify__toast--error')]//div[contains(@class, 'Toastify__toast-body')]")
+    wb_txt_tab_errorMsg_xpath = (By.XPATH, "//div[contains(@class,'MuiAlert-filledError')]")
+
     wb_txt_successMsg_xpath = (By.XPATH,
                                "//div[contains(@class, 'Toastify__toast Toastify__toast--success')]//div[contains(@class, 'Toastify__toast-body')]")
+
+    wb_txt_tab_successMsg_xpath = (By.XPATH, "//div[contains(@class,'MuiAlert-filledSuccess')]")
+    wb_txt_tab_loadingMsg_xpath = (
+    By.XPATH, "//div[contains(@class,'MuiAlert-message')]//span[contains(text(),'Uploading')]")
 
     """Constructor of the page class"""
 
@@ -40,10 +46,30 @@ class BasePage(WebDriverWait_Util):
             print(e)
         return errorMsg
 
+    def get_displayed_tab_error_msg(self):
+        errorMsg = ""
+        try:
+            errorMsg = self.wait_get_wbElement_text(self.wb_txt_tab_errorMsg_xpath)
+            if "\n" in errorMsg:
+                errorMsg = errorMsg.replace("\n", ": ")
+            self.wait_in_seconds(2)
+        except AssertionError as e:
+            print(e)
+        return errorMsg
+
     def get_displayed_success_msg(self):
         successMsg = ""
         try:
             successMsg = self.wait_get_wbElement_text(self.wb_txt_successMsg_xpath)
+            self.wait_in_seconds(2)
+        except AssertionError as e:
+            print(e)
+        return successMsg
+
+    def get_displayed_tab_success_msg(self):
+        successMsg = ""
+        try:
+            successMsg = self.wait_get_wbElement_text(self.wb_txt_tab_successMsg_xpath)
             self.wait_in_seconds(2)
         except AssertionError as e:
             print(e)

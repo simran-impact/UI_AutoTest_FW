@@ -1,3 +1,4 @@
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 
@@ -8,17 +9,22 @@ from utilities.Driver_Utils import Driver_Utils
 
 class DashboardPage(BasePage):
     """Web_Elements"""
-    wb_hdr_attributeSmart_id = (By.ID, "navbarBrand")
+    wb_hdr_attributeSmart_id = (By.XPATH, "//div[@class='navbar-brand']/span")
     wb_hdr_dashboard_id = (By.ID, "dashboardTitle")
     wb_btn_upload_id = (By.ID, "dashboardUploadBtn")
-    wb_tabHdr_createBatch_xpath = (By.XPATH, "//span[@class='upload-header' and contains(text(),'Create Batch')]")
-    wb_btn_downloadSample_id = (By.ID, "UpldLinkSample")
+    wb_tabHdr_createBatch_xpath = (
+        By.XPATH, "//div[@class='MuiDialogTitle-root']//span[contains(text(),'Upload Batch')]")
+    wb_btn_downloadSample_id = (By.ID, "DownloadLinkSample")
     wb_tb_batchName_id = (By.ID, "upldInputBatchName")
-    wb_input_fileUpload_ID = (By.ID, "upldInputDropzone")  # Need To Change later to the BasePage if Needed
+    wb_input_fileUpload_ID = (
+        By.XPATH, "//input[contains(@id,'filepond--browser')]")  # Need To Change later to the BasePage if Needed
     wb_btn_dashboardRefresh_ID = (By.ID, "dashboardRefreshBtn")
-    wb_tabHdr_deleteBatch_xpath = (By.XPATH, "//span[@class='delete-batch-header' and contains(text(),'Delete Batch')]")
-    wb_tabTxt_deleteBatch_xpath = (By.XPATH, "//div[@class='delete-download-container']//h3")
+    wb_tabHdr_deleteBatch_xpath = (By.XPATH, "//div[@class='MuiDialogTitle-root']//h2[contains(text(),'Delete Batch')]")
+    wb_tabTxt_deleteBatch_xpath = (
+        By.XPATH, "//div[@class='delete-download-container']//h3")  # check  //div[@class='MuiDialogContent-root']//p
     wb_btn_downloadCSV_xpath = (By.XPATH, "//span[contains(@id, 'download') and contains(text(),'CSV file')]")
+    # "//button[contains(@id, 'download')]//li[contains(text(),'CSV')]"
+    # "//ul[contains(@class,'MuiList-root')]//li[contains(text(),'CSV')]/*[1]"
 
     """String_Elements"""
     strBatchSummaryTbl = "//div//table[@id='dashboardBatchTable']"
@@ -80,6 +86,33 @@ class DashboardPage(BasePage):
         except AssertionError as e:
             print(e)
 
+    def waitTillBatchProcessedAndRefreshBtn(self, intWaitSec, strBatchName):
+        try:
+            attempts = 0
+            iRowCount = 0
+            strRowListLocator = self.strBatchSummaryTbl + "//tbody//tr"
+            wb_lstTableRows = self.driver.find_elements(By.XPATH, strRowListLocator)
+            for i in range(1, len(wb_lstTableRows) + 1):
+                strBatchNameLocator = self.strBatchSummaryTbl + "//tbody//tr[" + str(
+                    i) + "]//div[contains(@class,'table__batchname')]/./span//span"
+                wb_batchName = self.driver.find_element(By.XPATH, strBatchNameLocator)
+                if strBatchName == wb_batchName.text:
+                    iRowCount = i
+                    break
+            strBatchProcessedLocator = self.strBatchSummaryTbl + "//tbody//tr[" + str(
+                iRowCount) + "]//div[contains(@class,'table__batchname')]//a//span/*[1]"
+            while [attempts <= 15]:
+                try:
+                    self.driver.find_element(By.XPATH, strBatchProcessedLocator)
+                    result = True
+                    if result is True:
+                        break
+                except NoSuchElementException:
+                    self.wait_in_seconds(intWaitSec)
+                    self.wait_click(self.wb_btn_dashboardRefresh_ID)
+        except AssertionError as e:
+            print(e)
+
     def create_batch_by_uploadingCSV(self, strBatchName, strFileName):
         try:
             self.wait_in_seconds(2)
@@ -102,8 +135,10 @@ class DashboardPage(BasePage):
             strRowListLocator = self.strBatchSummaryTbl + "//tbody//tr"
             wbLstTableRows = self.driver.find_elements(By.XPATH, strRowListLocator)
             for i in range(1, len(wbLstTableRows) + 1):
-                strBatchNameLocator = self.strBatchSummaryTbl + "//tbody//tr[" + str(i) + "]//u"
-                strBatchCreatedLocator = self.strBatchSummaryTbl + "//tbody//tr[" + str(i) + "]//span[2]"
+                strBatchNameLocator = self.strBatchSummaryTbl + "//tbody//tr[" + str(
+                    i) + "]//div[contains(@class,'table__batchname')]/./span//span"
+                strBatchCreatedLocator = self.strBatchSummaryTbl + "//tbody//tr[" + str(
+                    i) + "]//div[contains(@class,'table__batchname')]//span[2]"
                 wb_batchName = self.driver.find_element(By.XPATH, strBatchNameLocator)
                 wb_batchCreated = self.driver.find_element(By.XPATH, strBatchCreatedLocator)
                 if strBatchName == wb_batchName.text:
@@ -137,15 +172,15 @@ class DashboardPage(BasePage):
     def validate_batchTbl_data(self, strGetMapKey, strBatchName):
         strBatchTblData = ""
         try:
-            if strGetMapKey not in ["Num of broken urls", "Actions", "Batch Name"]:
+            if strGetMapKey not in ["Batch Name", "Num of products uploaded", "Num of broken urls", "Actions"]:
                 iThCount = 0
                 iRowCount = 0
-                strHeaderColmListLocator = self.strBatchSummaryTbl + "//thead//th"
+                strHeaderColmListLocator = self.strBatchSummaryTbl + "//thead//td//span"
                 wb_lstTableHeaders = self.driver.find_elements(By.XPATH, strHeaderColmListLocator)
                 strRowListLocator = self.strBatchSummaryTbl + "//tbody//tr"
                 wb_lstTableRows = self.driver.find_elements(By.XPATH, strRowListLocator)
                 for j in range(1, len(wb_lstTableHeaders) + 1):
-                    strHeaderColmLocator = self.strBatchSummaryTbl + "//thead//th[" + str(j) + "]"
+                    strHeaderColmLocator = self.strBatchSummaryTbl + "//thead//td[" + str(j) + "]//span"
                     wb_TableHeader = self.driver.find_element(By.XPATH, strHeaderColmLocator)
                     str_HdrTxt = wb_TableHeader.text
                     if "\n" in str_HdrTxt:
@@ -154,7 +189,8 @@ class DashboardPage(BasePage):
                         iThCount = j
                         break
                 for i in range(1, len(wb_lstTableRows) + 1):
-                    strBatchNameLocator = self.strBatchSummaryTbl + "//tbody//tr[" + str(i) + "]//u"
+                    strBatchNameLocator = self.strBatchSummaryTbl + "//tbody//tr[" + str(
+                        i) + "]//div[contains(@class,'table__batchname')]//a//span"
                     wb_batchName = self.driver.find_element(By.XPATH, strBatchNameLocator)
                     if strBatchName == wb_batchName.text:
                         iRowCount = i
