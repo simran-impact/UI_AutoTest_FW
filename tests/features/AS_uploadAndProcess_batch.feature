@@ -8,14 +8,14 @@ Feature: Upload and Process Batch
     When User clicks on "AttributeSmart" button in IA Smart Platform application page
     And User lands on Attribute Smart Dashboard Page
     Then User validates the columns available in the batch table
-      | Column Names    |
-      | Batch Name      |
+      | Column Names      |
+      | Batch Name        |
       | Products Uploaded |
       | Products Tagged   |
-      | Tags Generated  |
-      | Tags Edited   |
-      | Tags Reviewed  |
-      | Actions         |
+      | Tags Generated    |
+      | Tags Edited       |
+      | Tags Reviewed     |
+      | Actions           |
 
   @upload_csv_test
   Scenario: User downloads the sample CSV required to create a batch
@@ -35,18 +35,18 @@ Feature: Upload and Process Batch
     And Enters the new batch name in the Create Batch Tab and uploads CSV file
       | Test Condition         | Upload File        |
       | CSV in Expected Format | expectedFormat.csv |
-    Then User validates if "Batch created successfully." success message pops up
+    Then User validates if "BATCH: created successfully" success message pops up on upload tab
     Then User checks if the created batch name is displayed in the batch table on Dashboard Page with following
-      | Test Condition         | Values to Check |
-      | Batch Name             | Present         |
-      | Num of images uploaded | 10              |
-      | Num of broken urls     | 0               |
-      | Images Uploaded        | 10              |
-      | Images Tagged          | 10              |
-      | Tags Generated         | 0               |
-      | Tags Reviewed          | 0               |
-      | Tags Finalized         | 0               |
-      | Actions                | Present         |
+      | Test Condition           | Values to Check |
+      | Batch Name               | Present         |
+      | Num of products uploaded | 19              |
+      | Num of broken urls       | 0               |
+      | Products Uploaded        | 19              |
+      | Products Tagged          | 19              |
+      | Tags Generated           | 57              |
+      | Tags Edited              | 0               |
+      | Tags Reviewed            | 0               |
+      | Actions                  | Present         |
     Then User performs "DELETE :: YES" action on the created Batch present in the batch table
     And User validates if "Batch deleted successfully." success message pops up
     And checks if the Batch is deleted from the batch table
@@ -61,7 +61,7 @@ Feature: Upload and Process Batch
     And Does not enter batch name in the Create Batch Tab and uploads CSV file
       | Test Condition         | Upload File        |
       | CSV in Expected Format | expectedFormat.csv |
-    Then User validates if "Batch Name: This field may not be blank." error message pops up
+    Then User validates if "BATCH NAME: This field may not be blank." error message pops up in upload tab
 
   @upload_csv_test
   Scenario: User try to create a batch by uploading a CSV file in an incorrect format and validates error message

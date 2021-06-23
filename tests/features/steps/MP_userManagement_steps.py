@@ -31,7 +31,7 @@ def user_logs_into_the_application(context):
 @when('User clicks on "{application}" button in IA Smart Platform application page')
 def user_clicks_on_app_button_in_IA_Smart_Platform_application_page(context, application):
     strAppName = application
-    context.login_page.clickOn_application_btn(strAppName)
+    # context.login_page.clickOn_application_btn(strAppName)
 
 
 @when('Enters email and password')
@@ -70,7 +70,7 @@ def enters_invalid_email_and_password(context):
     context.login_page.enter_username_and_password(Driver_Utils.random_email(), Driver_Utils.random_string())
 
 
-@then('User validates if "{msg}" error message pops up')
+@then('User validates if "{msg}" error message pops up ')
 def user_validates_if_error_message_pops_up(context, msg):
     expt_text = msg
     act_text = context.base_page.get_displayed_error_msg()
@@ -82,13 +82,40 @@ def user_validates_if_error_message_pops_up(context, msg):
         assert False
 
 
+@then('User validates if "{msg}" error message pops up in upload tab')
+def user_validates_if_error_message_pops_up_in_uploadTab(context, msg):
+    expt_text = msg.replace(": ", "")
+    act_text = context.base_page.get_displayed_tab_error_msg()
+    if act_text == expt_text:
+        print("[ " + expt_text + " ]: Error message is displayed.")
+        assert True
+    else:
+        print("\n Expected: [ " + expt_text + " ], but found [ " + act_text + " ]\n")
+        assert False
+
+
 @then('User validates if "{msg}" success message pops up')
-def step_impl(context, msg):
+def success_Message_popUp(context, msg):
     if "<Batch Name>" in msg:
         expt_text = msg.replace("<Batch Name>", setupInstances.strCreatedBatchName)
     else:
         expt_text = msg
     act_text = context.base_page.get_displayed_success_msg()
+    if act_text == expt_text:
+        print("[ " + expt_text + " ]: Success message is displayed.")
+        assert True
+    else:
+        print("\n Expected: [ " + expt_text + " ], but found [ " + act_text + " ]\n")
+        assert False
+
+
+@then('User validates if "{msg}" success message pops up on upload tab')
+def success_msg_on_uploadTab(context, msg):
+    if "<Batch Name>" in msg:
+        expt_text = msg.replace("<Batch Name>", setupInstances.strCreatedBatchName)
+    else:
+        expt_text = msg.replace(": ", "")
+    act_text = context.base_page.get_displayed_tab_success_msg()
     if act_text == expt_text:
         print("[ " + expt_text + " ]: Success message is displayed.")
         assert True
