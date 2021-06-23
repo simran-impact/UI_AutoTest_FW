@@ -1,0 +1,5 @@
+behave==1.2.6
+selenium==3.141.0
+openpyxl==3.0.7
+delayed-assert==0.3.5
+pandas~=1.2.4
