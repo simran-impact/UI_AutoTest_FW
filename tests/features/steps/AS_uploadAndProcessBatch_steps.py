@@ -7,7 +7,7 @@ from utilities import Date_Utils
 
 @when('User lands on Attribute Smart Dashboard Page')
 def user_lands_on_Attribute_Smart_Dashboard_Page(context):
-    expt_AS_text = "Attribute Smart"
+    expt_AS_text = "AttributeSmart"
     act_AS_text = context.dashboard_page.get_attributeSmart_hdrTxt()
     if act_AS_text == expt_AS_text:
         assert True
@@ -37,7 +37,7 @@ def test_user_validates_the_columns_available_in_the_batch_table(context):
 
 @then('User clicks on Upload button on the Dashboard Page')
 def user_clicks_on_Upload_button_on_the_Dashboard_Page(context):
-    expt_text = "Create Batch"
+    expt_text = "Upload Batch"
     act_text = context.dashboard_page.clickUploadBtn()
     if act_text == expt_text:
         assert True
@@ -66,11 +66,10 @@ def test_user_checks_if_the_created_batch_name_is_displayed_in_the_batch_table_o
     act_createdBatch_txt = context.dashboard_page.validate_batchCreated(setupInstances.strCreatedBatchName)
     expect(act_createdBatch_txt == expt_createdBatch_txt,
            "\n Batch name and created date incorrect : [Result: " + act_createdBatch_txt + " ]\n")
-    context.dashboard_page.clickDashBoardRefreshBtn(35)
-    context.dashboard_page.clickDashBoardRefreshBtn(35)
+    context.dashboard_page.waitTillBatchProcessedAndRefreshBtn(35, setupInstances.strCreatedBatchName)
     context.base_page.wait_in_seconds(10)
     for colName in setupInstances.lstMapTestData:
-        if colName not in ["Num of broken urls", "Actions", "Batch Name", "Num of images uploaded"]:
+        if colName not in ["Batch Name", "Num of products uploaded", "Num of broken urls", "Actions"]:
             expt_Text = setupInstances.lstMapTestData.get(colName)
             act_Text = context.dashboard_page.validate_batchTbl_data(colName, setupInstances.strCreatedBatchName)
             expect(act_Text == expt_Text, "\n Data not as expected for the Column : [ " + colName + " ]\n")

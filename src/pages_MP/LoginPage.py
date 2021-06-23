@@ -11,7 +11,7 @@ class LoginPage(BasePage):
     wb_btn_signIn_xpath = (By.XPATH, "//button[contains(text(),'Sign in')]")  # TimeBeing
     wb_btn_forgotPwd_id = (By.ID, "btnReset")
     wb_hdr_markSmart_xpath = (By.XPATH, "//span[@id='titleColor' and contains(text(),'MarkSmart')]")
-    wb_appBtn_AttributeSmart_id = (By.ID, "Attribute Smart")
+    wb_appBtn_AttributeSmart_id = (By.ID, "AttributeSmart")
     wb_appBtn_MarkSmart_id = (By.ID, "MarkSmart")
 
     """Constructor of the page class"""
