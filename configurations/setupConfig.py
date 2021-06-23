@@ -49,11 +49,17 @@ def launchApp():
 
 def delete_recreating_Folders():
     """ Deleting and Creating a Files Download Folder """
-    shutil.rmtree(baseConfig.DOWNLOADEDFILES_FLD_PATH)
-    os.makedirs(baseConfig.DOWNLOADEDFILES_FLD_PATH)
+    if not os.path.exists(baseConfig.DOWNLOADEDFILES_FLD_PATH):
+        os.makedirs(baseConfig.DOWNLOADEDFILES_FLD_PATH)
+    else:
+        shutil.rmtree(baseConfig.DOWNLOADEDFILES_FLD_PATH)
+        os.makedirs(baseConfig.DOWNLOADEDFILES_FLD_PATH)
     """ Deleting and Creating a Extracted Data Folder """
-    shutil.rmtree(baseConfig.EXTRACTEDDATAFILES_FLD_PATH)
-    os.makedirs(baseConfig.EXTRACTEDDATAFILES_FLD_PATH)
+    if not os.path.exists(baseConfig.EXTRACTEDDATAFILES_FLD_PATH):
+        os.makedirs(baseConfig.EXTRACTEDDATAFILES_FLD_PATH)
+    else:
+        shutil.rmtree(baseConfig.EXTRACTEDDATAFILES_FLD_PATH)
+        os.makedirs(baseConfig.EXTRACTEDDATAFILES_FLD_PATH)
 
 
 def save_screenshots_on_failedScenarios(driver, strScenarioName):
